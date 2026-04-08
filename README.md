@@ -1,0 +1,2 @@
+# feishu_mcp_auth_skills
+飞书MCP7天自动授权Skills
