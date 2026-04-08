@@ -1,0 +1,11 @@
+state/
+runs/
+artifacts/
+*.log
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.json
+!manifest.json
+!flows/*.json
