@@ -12,22 +12,36 @@ from typing import Any
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from playwright.sync_api import sync_playwright
 
-
-PYTHON = Path("python")
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 STATE_PATH = SKILL_ROOT / "state" / "feishu_mcp_auth.json"
+CONFIG_PATH = SKILL_ROOT / "config" / "user_config.json"
 LOGIN_SUBSTRING = "accounts.feishu.cn/accounts/page/login"
 AUTH_IFRAME_SUBSTRING = "accounts.feishu.cn/open-apis/authen/v1/authorize"
 
 
+def load_user_config() -> dict[str, Any]:
+    if not CONFIG_PATH.exists():
+        return {}
+    try:
+        return json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
 def parse_args() -> argparse.Namespace:
+    cfg = load_user_config()
     parser = argparse.ArgumentParser(description="Run the Feishu MCP reauthorization automation flow")
     parser.add_argument(
         "--url",
-        default="https://open.feishu.cn/page/mcp/7615508457076231131",
+        default=cfg.get("default_mcp_url", "https://open.feishu.cn/page/mcp/7615508457076231131"),
         help="Target Feishu MCP page URL",
     )
-    parser.add_argument("--headed", action="store_true", help="Run browser in headed mode for login/debugging")
+    parser.add_argument(
+        "--headed",
+        action="store_true",
+        default=bool(cfg.get("headed_default", False)),
+        help="Run browser in headed mode for login/debugging",
+    )
     parser.add_argument("--output-dir", default=None, help="Optional explicit output directory")
     parser.add_argument(
         "--login-wait-seconds",
@@ -80,9 +94,6 @@ def add_history(history: list[dict[str, Any]], step: str, action: str, url: str,
 
 def main() -> int:
     args = parse_args()
-    if not PYTHON.exists():
-        print(f"python executable not found: {PYTHON}", file=sys.stderr)
-        return 2
 
     stamp = time.strftime("%Y%m%d-%H%M%S")
     output_dir = Path(args.output_dir).resolve() if args.output_dir else SKILL_ROOT / "runs" / stamp

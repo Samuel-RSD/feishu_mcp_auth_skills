@@ -1,6 +1,6 @@
 ---
 name: feishu-mcp-reauth-public
-description: Automate Feishu MCP reauthorization for open.feishu.cn/page/mcp links. Use when the user needs to click 重新授权, complete the 授权 dialog, verify the temporary success state, and confirm the expiry date refreshes correctly. Public-safe edition with no personal auth state or local private paths.
+description: Automate Feishu MCP reauthorization for open.feishu.cn/page/mcp links. Use when the user needs to click 重新授权, complete the 授权 dialog, verify the temporary success state, and confirm the expiry date refreshes correctly. Public-safe edition with no personal auth state or local private paths. Includes Linux install helpers that create a local .venv, install Python 3 dependencies, install Playwright Chromium, and default python_path to the .venv python3 interpreter to reduce manual setup.
 ---
 
 # Feishu MCP Reauthorization (Public Edition)
@@ -18,28 +18,24 @@ Use this skill to automate Feishu MCP reauthorization flows for MCP pages under 
 7. Confirm the page returns to the MCP config view.
 8. Confirm the expiry date matches `today + 7 days`.
 
-## Notes
+## Public-Safe Scope
 
-- This public edition intentionally excludes any personal browser session, cookies, auth state, screenshots, logs, and run history.
-- You must create your own local browser auth state before running headless mode.
-- Replace any local Python path with your own environment path.
+- Exclude personal browser session, cookies, screenshots, logs, and historical runs from the published package.
+- Keep `state/`, `runs/`, and user-local config as local-only data.
 
-## Recommended Layout
+## Install and Configure
 
-- `scripts/run_feishu_mcp_reauth.py`
-- `flows/feishu_mcp_reauth.json`
-- optional local-only `state/` directory (not committed)
-
-## Typical Command
+Linux first-run path:
 
 ```bash
-python scripts/run_feishu_mcp_reauth.py --url https://open.feishu.cn/page/mcp/XXXXXXXXXXXX
+bash scripts/install_linux.sh
+/home/your-user/path/to/skill/.venv/bin/python scripts/configure_skill.py
+/home/your-user/path/to/skill/.venv/bin/python scripts/run_feishu_mcp_reauth.py --headed --url https://open.feishu.cn/page/mcp/XXXXXXXXXXXX
 ```
 
-## Headed First Run
+## Important Behavior
 
-```bash
-python scripts/run_feishu_mcp_reauth.py --headed --url https://open.feishu.cn/page/mcp/XXXXXXXXXXXX
-```
-
-Use the headed run once to log in manually and save your own local browser state. Do not commit that state file.
+- `scripts/install_linux.sh` creates `.venv` with `python3`, installs Python dependencies, installs Playwright Chromium, and writes `config/user_config.json` with `python_path` defaulted to `.venv/bin/python`.
+- `scripts/configure_skill.py` preserves that default unless the user overrides it.
+- `scripts/run_feishu_mcp_reauth.py` reads defaults from `config/user_config.json` so post-install commands are shorter.
+- First run should usually use `--headed` to complete manual Feishu login and save local auth state.

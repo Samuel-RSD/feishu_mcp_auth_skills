@@ -22,8 +22,8 @@
 ```bash
 cd feishu-mcp-reauth-public
 bash scripts/install_linux.sh
-python scripts/configure_skill.py
-python scripts/run_feishu_mcp_reauth.py --headed --url <你的飞书MCP链接>
+.venv/bin/python scripts/configure_skill.py
+.venv/bin/python scripts/run_feishu_mcp_reauth.py --headed --url <你的飞书MCP链接>
 ```
 
 ## 自动安装内容
@@ -43,10 +43,12 @@ python scripts/run_feishu_mcp_reauth.py --headed --url <你的飞书MCP链接>
 需要用户填写：
 - Feishu OpenID
 - 默认 MCP URL
-- 本地 Python 路径（可选，默认使用当前 venv）
+- 本地 Python 路径（可选；安装后默认已写为 `.venv/bin/python`，通常无需手改）
 - 是否默认 headed
 
 ## 重要说明
+
+- 安装脚本会优先创建 `.venv`，并把 `python_path` 直接写成该虚拟环境里的 Python 3 解释器，避免用户机器只有 `python3` 没有 `python` 时额外手工修配置。
 
 - `state/`、`runs/`、日志、截图、登录态不会提交到 GitHub。
 - 首次运行建议使用 `--headed`，手工登录飞书后保存本地授权态。
