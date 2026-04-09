@@ -1,0 +1,42 @@
+feishu-mcp-reauth-public
+飞书 MCP 重新授权技能（Linux 版）。
+
+目标
+安装后帮助用户：
+
+自动安装运行依赖
+自动安装浏览器（推荐 Chromium / Chrome）
+自动生成本地配置文件
+指导用户填写飞书 OpenID、本地路径、目标 MCP 页面 URL
+运行一次 headed 模式完成首次登录与授权态落盘
+适用环境
+Linux（Ubuntu / Debian 优先）
+Python 3.10+
+可联网下载 Python 依赖与 Playwright Chromium
+安装步骤
+cd feishu-mcp-reauth-public
+bash scripts/install_linux.sh
+python scripts/configure_skill.py
+python scripts/run_feishu_mcp_reauth.py --headed --url <你的飞书MCP链接>
+自动安装内容
+install_linux.sh 会尝试：
+
+安装 Python venv
+安装 playwright pillow opencv-python-headless rapidocr-onnxruntime
+安装 Playwright Chromium
+检查系统是否已有 google-chrome / chromium / chromium-browser
+若检测不到，给出下一步安装提示
+自动配置内容
+configure_skill.py 会交互式生成：
+
+config/user_config.json
+需要用户填写：
+
+Feishu OpenID
+默认 MCP URL
+本地 Python 路径（可选，默认使用当前 venv）
+是否默认 headed
+重要说明
+state/、runs/、日志、截图、登录态不会提交到 GitHub。
+首次运行建议使用 --headed，手工登录飞书后保存本地授权态。
+后续可切换为 headless 自动运行。
